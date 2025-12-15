@@ -5,5 +5,11 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.ProjecteCafeteriaDavidGelmaCorral2nDAM" parent="Base.Theme.ProjecteCafeteriaDavidGelmaCorral2nDAM" />
+    <style name="Theme.ProjecteCafeteriaDavidGelmaCorral2nDAM" parent="Base.Theme.ProjecteCafeteriaDavidGelmaCorral2nDAM"/>
+
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/cafe_logo</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.ProjecteCafeteriaDavidGelmaCorral2nDAM</item>
+    </style>
 </resources>
