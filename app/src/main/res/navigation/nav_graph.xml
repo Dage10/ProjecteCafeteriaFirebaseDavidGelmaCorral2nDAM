@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/menjarsFragment">
+
+    <fragment
+        android:id="@+id/menjarsFragment"
+        android:name="com.daviddam.projectecafeteriadavidgelmacorral2ndam.MenjarsFragment"
+        android:label="fragment_menjars"
+        tools:layout="@layout/fragment_menjars" >
+        <action
+            android:id="@+id/action_menjarsFragment_to_begudesFragment"
+            app:destination="@id/begudesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/begudesFragment"
+        android:name="com.daviddam.projectecafeteriadavidgelmacorral2ndam.BegudesFragment"
+        android:label="fragment_begudes"
+        tools:layout="@layout/fragment_begudes" >
+        <action
+            android:id="@+id/action_begudesFragment_to_postresFragment"
+            app:destination="@id/postresFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/postresFragment"
+        android:name="com.daviddam.projectecafeteriadavidgelmacorral2ndam.PostresFragment"
+        android:label="fragment_postres"
+        tools:layout="@layout/fragment_postres" >
+        <action
+            android:id="@+id/action_postresFragment_to_pagamentFragment2"
+            app:destination="@id/pagamentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/historialFragment"
+        android:name="com.daviddam.projectecafeteriadavidgelmacorral2ndam.HistorialFragment"
+        android:label="fragment_historial"
+        tools:layout="@layout/fragment_historial" />
+    <fragment
+        android:id="@+id/pagamentFragment"
+        android:name="com.daviddam.projectecafeteriadavidgelmacorral2ndam.PagamentFragment"
+        android:label="fragment_pagament"
+        tools:layout="@layout/fragment_pagament" >
+        <action
+            android:id="@+id/action_pagamentFragment_to_historialFragment"
+            app:destination="@id/historialFragment" />
+    </fragment>
+</navigation>
