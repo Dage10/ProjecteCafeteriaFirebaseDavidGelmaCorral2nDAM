@@ -46,8 +46,15 @@ class MenjarsFragment : Fragment() {
 
         viewModelMenjars.menjarProductes.observe(viewLifecycleOwner) { llista ->
             binding.recyclerProductes.adapter = adapter.ProducteAdapter(llista, alClicar = { producte ->
-                modelCompartit.afegirProducte(producte)
+                viewModelMenjars.afegirProducte(producte)
             })
+        }
+
+        viewModelMenjars.producteAfegit.observe(viewLifecycleOwner) { producte ->
+            producte?.let {
+                modelCompartit.afegirProducte(it)
+                viewModelMenjars.buidarProducteAfegit()
+            }
         }
 
         return binding.root

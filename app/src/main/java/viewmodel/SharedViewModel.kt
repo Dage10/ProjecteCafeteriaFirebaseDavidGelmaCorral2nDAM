@@ -13,6 +13,10 @@ class SharedViewModel : ViewModel() {
     private val _preuTotal = MutableLiveData<Double>(0.0)
     val preuTotal: LiveData<Double> = _preuTotal
 
+    
+    private val _comandaRealitzada = MutableLiveData<Unit?>()
+    val comandaRealitzada: LiveData<Unit?> = _comandaRealitzada
+
     private fun recalculaPreuTotal(llista: List<ProducteEntity>) {
         _preuTotal.value = llista.sumOf { it.preu }
     }
@@ -24,16 +28,17 @@ class SharedViewModel : ViewModel() {
         recalculaPreuTotal(llista)
     }
 
-    fun eliminarProducte(producte: ProducteEntity) {
-        val llista = _productesSeleccionats.value ?: mutableListOf()
-        llista.remove(producte)
-        _productesSeleccionats.value = llista
-        recalculaPreuTotal(llista)
-    }
-
     fun eliminarProductes() {
         val buida = mutableListOf<ProducteEntity>()
         _productesSeleccionats.value = buida
         recalculaPreuTotal(buida)
+    }
+
+    fun notificarComandaRealitzada() {
+        _comandaRealitzada.value = Unit
+    }
+
+    fun buidarComandaRealitzada() {
+        _comandaRealitzada.value = null
     }
 }

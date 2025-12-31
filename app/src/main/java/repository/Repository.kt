@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import database.ComandaDAO
 import database.ComandaProducteDAO
 import database.ProducteDAO
-import entity.ComandaAProductes
 import entity.ComandaEntity
 import entity.ComandaProducteRelacioForeign
 import entity.ProducteEntity
@@ -33,6 +32,4 @@ class Repository(
     fun getProductesPerCategoria(categoria: String): LiveData<List<ProducteEntity>> =
         producteDao.getProductesCategoria(categoria)
 
-    suspend fun insertProducte(producte: ProducteEntity) = producteDao.insertarProducte(producte)
-    suspend fun deleteProducte(producte: ProducteEntity) = producteDao.eliminarProduct(producte)
 }

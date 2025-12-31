@@ -8,4 +8,5 @@
     <color name="bottom_nav_selected_item">#FFFFFF</color>
     <color name="fragment_bg_color">#FFFFFF</color>
     <color name="fons_fragment">#ACAE65</color>
+    <color name="blau">#03bafc</color>
 </resources>

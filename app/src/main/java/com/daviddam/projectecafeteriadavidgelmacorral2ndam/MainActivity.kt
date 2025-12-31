@@ -35,6 +35,12 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        binding.btnLogout.setOnClickListener {
+            sharedPref.logout()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
         val drawerLayout = binding.main
         val navigationView = binding.navigationView
         val toggle = ActionBarDrawerToggle(

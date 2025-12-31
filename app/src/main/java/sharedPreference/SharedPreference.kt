@@ -40,23 +40,8 @@ class SharedPreference(private val context: Context) {
     fun getUsuari(): String? {
         return prefs.getString("usuari_actual", null)
     }
-
-    fun getContrasenyaUsuari(usuari: String): String? {
-        return prefs.getString(userKey(usuari), null)
-    }
-
    
     fun logout() {
         prefs.edit().putBoolean("estaLogat", false).remove("usuari_actual").apply()
-    }
-
-   
-    fun eliminarUsuari(usuari: String) {
-        prefs.edit().remove(userKey(usuari)).apply()
-    }
-
-    
-    fun llistarUsuaris(): List<String> {
-        return prefs.all.keys.filter { it.startsWith("user_") }.map { it.removePrefix("user_") }
     }
 }

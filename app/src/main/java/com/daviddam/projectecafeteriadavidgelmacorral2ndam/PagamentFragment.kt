@@ -55,10 +55,18 @@ class PagamentFragment : Fragment() {
             val productes = modelCompartit.productesSeleccionats.value ?: emptyList()
             if (total > 0.0 && productes.isNotEmpty()) {
                 vmPagament.pagar(usuari, total, productes)
-                modelCompartit.eliminarProductes()
-                android.widget.Toast.makeText(requireContext(), "Comanda registrada", android.widget.Toast.LENGTH_SHORT).show()
             } else {
                 android.widget.Toast.makeText(requireContext(), "No hi ha cap producte", android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        
+        vmPagament.comandaFeta.observe(viewLifecycleOwner) { feta ->
+            if (feta == true) {
+                modelCompartit.notificarComandaRealitzada()
+                modelCompartit.eliminarProductes()
+                android.widget.Toast.makeText(requireContext(), "Comanda registrada", android.widget.Toast.LENGTH_SHORT).show()
+                vmPagament.clearComandaFeta()
             }
         }
 

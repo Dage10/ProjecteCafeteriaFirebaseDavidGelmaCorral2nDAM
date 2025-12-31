@@ -3,10 +3,9 @@ package viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.MutableLiveData
 import database.AppDatabase
 import entity.ProducteEntity
-import kotlinx.coroutines.launch
 import repository.Repository
 
 class MenjarViewModel(application: Application) : AndroidViewModel(application) {
@@ -15,6 +14,9 @@ class MenjarViewModel(application: Application) : AndroidViewModel(application) 
 
     val menjarProductes: LiveData<List<ProducteEntity>>
 
+    private val _producteAfegit = MutableLiveData<ProducteEntity?>()
+    val producteAfegit: LiveData<ProducteEntity?> = _producteAfegit
+
     init {
         val db = AppDatabase.getDatabase(application)
         repository = Repository(db.comandaDao(), db.producteDao(),db.comandaProducteDao())
@@ -22,8 +24,10 @@ class MenjarViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun afegirProducte(producte: ProducteEntity) {
-        viewModelScope.launch {
-            repository.insertProducte(producte)
-        }
+        _producteAfegit.value = producte
+    }
+
+    fun buidarProducteAfegit() {
+        _producteAfegit.value = null
     }
 }

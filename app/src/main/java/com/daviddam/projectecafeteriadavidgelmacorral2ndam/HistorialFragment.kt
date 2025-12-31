@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.daviddam.projectecafeteriadavidgelmacorral2ndam.databinding.FragmentHistorialBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -44,6 +45,7 @@ class HistorialFragment : Fragment() {
         val usuari = sharedPref.getUsuari() ?: "unknown"
 
         val vmHistorial: viewmodel.HistorialViewModel by viewModels()
+        val sharedModel: viewmodel.SharedViewModel by activityViewModels()
 
         vmHistorial.getOrdresUsuari(usuari).observe(viewLifecycleOwner) { llistaComandes ->
             binding.recyclerComandes.adapter = adapter.ComandaAdapter(
@@ -78,6 +80,23 @@ class HistorialFragment : Fragment() {
                         .show()
                 }
             )
+        }
+
+
+        sharedModel.comandaRealitzada.observe(viewLifecycleOwner) { evt ->
+            evt?.let {
+                vmHistorial.handleComandaRealitzada()
+                sharedModel.buidarComandaRealitzada()
+            }
+        }
+
+        
+        vmHistorial.comandaNova.observe(viewLifecycleOwner) { nova ->
+            if (nova == true) {
+                android.widget.Toast.makeText(requireContext(), "Nova comanda realitzada: actualitzat historial", android.widget.Toast.LENGTH_SHORT).show()
+                binding.recyclerComandes.scrollToPosition(0)
+                vmHistorial.clearComandaNova()
+            }
         }
 
         return binding.root
