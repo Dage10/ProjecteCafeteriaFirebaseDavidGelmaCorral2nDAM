@@ -18,18 +18,30 @@ class Repository(
         comandaDao.obtenirOrdresUsuari(usuari)
 
 
-    suspend fun insertComandaAmbProductes(comanda: ComandaEntity, productes: List<ProducteEntity>): Long {
+    suspend fun insertComandaAmbProductes(comanda: ComandaEntity, productes: List<entity.ProducteSeleccionat>): Long {
         val id = comandaDao.insertarComanda(comanda)
         val comandaId = id.toInt()
         for (producte in productes) {
-            comandaProducteDao.insert(ComandaProducteRelacioForeign(comandaId = comandaId, producteId = producte.id))
+            comandaProducteDao.insert(
+                ComandaProducteRelacioForeign(
+                    comandaId = comandaId,
+                    producteId = producte.producte.id,
+                    quantitat = producte.quantitat
+                )
+            )
         }
         return id
     }
     suspend fun updateComanda(comanda: ComandaEntity) = comandaDao.updateComanda(comanda)
-    suspend fun deleteComanda(comanda: ComandaEntity) = comandaDao.deleteComanda(comanda)
+    suspend fun deleteComanda(comanda: ComandaEntity) {
+        comandaProducteDao.eliminarPerComandaId(comanda.id)
+        comandaDao.deleteComanda(comanda)
+    }
 
     fun getProductesPerCategoria(categoria: String): LiveData<List<ProducteEntity>> =
         producteDao.getProductesCategoria(categoria)
+
+    suspend fun getProductesQuantitatPerComanda(comandaId: Int): List<entity.ProducteComandaQuantitat> =
+        comandaProducteDao.getProductesQuantitatPerComanda(comandaId)
 
 }

@@ -33,6 +33,13 @@ class ProducteAdapter(
             }
             alClicar(producte)
         }
+        val context = holder.binding.root.context
+        val imatgeResId = context.resources.getIdentifier(
+            producte.imatgeNom,
+            "drawable",
+            context.packageName
+        )
+        holder.binding.imatgeProducte.setImageResource(imatgeResId)
     }
 
     override fun getItemCount(): Int = llistaProductes.size

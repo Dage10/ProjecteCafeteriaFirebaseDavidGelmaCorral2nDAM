@@ -23,7 +23,7 @@ class PagamentViewModel(application: Application) : AndroidViewModel(application
         repository = Repository(db.comandaDao(), db.producteDao(),db.comandaProducteDao())
     }
 
-    fun pagar(usuari: String, total: Double, productes: List<entity.ProducteEntity>) {
+    fun pagar(usuari: String, total: Double, productes: List<entity.ProducteSeleccionat>) {
         viewModelScope.launch {
             repository.insertComandaAmbProductes(ComandaEntity(usuari = usuari, total = total), productes)
             _comandaFeta.postValue(true)

@@ -71,6 +71,26 @@ class HistorialFragment : Fragment() {
                 .show()
         }
 
+        fun mostrarDetallsComanda(comanda: entity.ComandaEntity) {
+            vmHistorial.getProductesQuantitat(comanda.id) { llista ->
+                var missatge = ""
+                if (llista.isEmpty()) {
+                    missatge = "No s'han trobat productes per a aquesta comanda"
+                } else {
+                    for (producte in llista) {
+                        missatge += producte.nom + " x" + producte.quantitat + "\n"
+                    }
+                }
+
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Detalls comanda")
+                    .setMessage(missatge)
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+        }
+
+
         vmHistorial.getOrdresUsuari(usuari).observe(viewLifecycleOwner) { llistaComandes ->
             binding.recyclerComandes.adapter = adapter.ComandaAdapter(
                 llistaComandes,
@@ -79,6 +99,8 @@ class HistorialFragment : Fragment() {
                 },
                 onEditar = { comanda ->
                     editar(comanda)
+                },
+                onMostrarDetalls = { comanda -> mostrarDetallsComanda(comanda)
                 }
             )
         }

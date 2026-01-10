@@ -24,6 +24,13 @@ class HistorialViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun getOrdresUsuari(usuari: String): LiveData<List<ComandaEntity>> = repository.getOrdresUsuari(usuari)
 
+    fun getProductesQuantitat(comandaId: Int, callback: (List<entity.ProducteComandaQuantitat>) -> Unit) {
+        viewModelScope.launch {
+            val llista = repository.getProductesQuantitatPerComanda(comandaId)
+            callback(llista)
+        }
+    }
+
     fun deleteComanda(comanda: ComandaEntity) {
         viewModelScope.launch { repository.deleteComanda(comanda) }
     }

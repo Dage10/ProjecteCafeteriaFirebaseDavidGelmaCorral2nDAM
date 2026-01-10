@@ -9,7 +9,8 @@ import entity.ComandaEntity
 class ComandaAdapter(
     private val llistaComandes: List<ComandaEntity>,
     private val onEliminar: (ComandaEntity) -> Unit,
-    private val onEditar: (ComandaEntity) -> Unit
+    private val onEditar: (ComandaEntity) -> Unit,
+    private val onMostrarDetalls: (ComandaEntity) -> Unit
 ) : RecyclerView.Adapter<ComandaAdapter.ComandaViewHolder>() {
 
     inner class ComandaViewHolder(val binding: ItemComandaBinding) : RecyclerView.ViewHolder(binding.root) {}
@@ -30,6 +31,10 @@ class ComandaAdapter(
         holder.itemView.setOnLongClickListener {
             onEliminar(comanda)
             true
+        }
+
+        holder.itemView.setOnClickListener {
+            onMostrarDetalls(comanda)
         }
     }
 

@@ -10,5 +10,6 @@ import androidx.room.Index
 )
 data class ComandaProducteRelacioForeign(
     val comandaId: Int,
-    val producteId: Int
+    val producteId: Int,
+    val quantitat: Int = 1
 )

@@ -50,7 +50,7 @@ class BegudesFragment : Fragment() {
 
         viewModelBegudes.producteAfegit.observe(viewLifecycleOwner) { producte ->
             producte?.let {
-                modelCompartit.afegirProducte(producte)
+                modelCompartit.afegirProducte(it)
                 viewModelBegudes.buidarProducteAfegit()
             }
         }

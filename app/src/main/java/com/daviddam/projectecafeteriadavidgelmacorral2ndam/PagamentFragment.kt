@@ -46,7 +46,12 @@ class PagamentFragment : Fragment() {
         val preferencies = sharedPreference.SharedPreference(requireContext())
 
         modelCompartit.productesSeleccionats.observe(viewLifecycleOwner) { llista ->
-            binding.recyclerSeleccionat.adapter = adapter.ProducteAdapter(llista, alClicar = {}, mostrarToast = false)
+            binding.recyclerSeleccionat.adapter = adapter.ProductesSeleccionatsAdapter(
+                llista,
+                { seleccionat -> modelCompartit.setQuantitat(seleccionat.producte.id, seleccionat.quantitat + 1) },
+                { seleccionat -> modelCompartit.setQuantitat(seleccionat.producte.id, seleccionat.quantitat - 1) },
+                { seleccionat -> modelCompartit.eliminarProducte(seleccionat.producte.id) }
+            )
         }
 
         binding.btnPagar.setOnClickListener {
