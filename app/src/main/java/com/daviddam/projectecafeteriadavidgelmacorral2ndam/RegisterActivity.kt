@@ -4,19 +4,20 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.daviddam.projectecafeteriadavidgelmacorral2ndam.databinding.ActivityRegisterBinding
-import sharedPreference.SharedPreference
+import kotlinx.coroutines.launch
+import repository.FirebaseRepository
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
+    private val firebaseRepo = FirebaseRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val sharedPref = SharedPreference(this)
 
         binding.btnRegistre.setOnClickListener {
             val usuari = binding.etUsuari.text.toString().trim()
@@ -27,14 +28,17 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val comprovar = sharedPref.registrarUsuari(usuari, contrasenya)
-            if (comprovar) {
-                android.widget.Toast.makeText(this, "Usuari registrat", android.widget.Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-            } else {
-                android.widget.Toast.makeText(this, "L'usuari ja existeix", android.widget.Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                val resultat = firebaseRepo.registrarUsuari(usuari, usuari, contrasenya)
+                resultat.onSuccess {
+                    android.widget.Toast.makeText(this@RegisterActivity, "Usuari registrat", android.widget.Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                resultat.onFailure {
+                    android.widget.Toast.makeText(this@RegisterActivity, "Error: aquest usuari ja existeix", android.widget.Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

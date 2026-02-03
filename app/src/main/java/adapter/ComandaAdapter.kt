@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.daviddam.projectecafeteriadavidgelmacorral2ndam.databinding.ItemComandaBinding
-import entity.ComandaEntity
+import entity.ComandaFirebase
 
 class ComandaAdapter(
-    private val llistaComandes: List<ComandaEntity>,
-    private val onEliminar: (ComandaEntity) -> Unit,
-    private val onEditar: (ComandaEntity) -> Unit,
-    private val onMostrarDetalls: (ComandaEntity) -> Unit
+    private val llistaComandes: List<ComandaFirebase>,
+    private val onEliminar: (ComandaFirebase) -> Unit,
+    private val onEditar: (ComandaFirebase) -> Unit,
+    private val onMostrarDetalls: (ComandaFirebase) -> Unit
 ) : RecyclerView.Adapter<ComandaAdapter.ComandaViewHolder>() {
 
     inner class ComandaViewHolder(val binding: ItemComandaBinding) : RecyclerView.ViewHolder(binding.root) {}

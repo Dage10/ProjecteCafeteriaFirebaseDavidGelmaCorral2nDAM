@@ -5,11 +5,15 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.daviddam.projectecafeteriadavidgelmacorral2ndam.databinding.ActivityLoginBinding
+import kotlinx.coroutines.launch
+import repository.FirebaseRepository
 import sharedPreference.SharedPreference
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private val firebaseRepo = FirebaseRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,14 +33,18 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (sharedPref.validarCredencials(usuariInput, contrasenyaInput)) {
-                sharedPref.setSessioUsuari(usuariInput)
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("USER", usuariInput)
-                startActivity(intent)
-                finish()
-            } else {
-                Toast.makeText(this, "Usuari o contrasenya incorrectes", Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                val resultat = firebaseRepo.loginUsuari(usuariInput, contrasenyaInput)
+                resultat.onSuccess {
+                    sharedPref.setSessioUsuari(usuariInput)
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    Toast.makeText(this@LoginActivity, "Login correctament", Toast.LENGTH_SHORT).show()
+                    startActivity(intent)
+                    finish()
+                }
+                resultat.onFailure {
+                    Toast.makeText(this@LoginActivity, "Error: Credencials incorrectes", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

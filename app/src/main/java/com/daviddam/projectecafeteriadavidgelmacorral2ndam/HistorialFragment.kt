@@ -42,56 +42,56 @@ class HistorialFragment : Fragment() {
         binding.recyclerComandes.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
 
         val sharedPref = sharedPreference.SharedPreference(requireContext())
-        val usuari = sharedPref.getUsuari() ?: "unknown"
+        sharedPref.getUsuari() ?: "unknown"
 
         val vmHistorial: viewmodel.HistorialViewModel by viewModels()
         val sharedModel: viewmodel.SharedViewModel by activityViewModels()
 
-        fun eliminar(comanda: entity.ComandaEntity) {
+        vmHistorial.getOrdresUsuariFirebase()
+
+        fun eliminar(comanda: entity.ComandaFirebase) {
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Eliminar comanda")
                 .setMessage("Segur que vols eliminar la comanda?")
                 .setPositiveButton("Eliminar") { _, _ ->
-                    vmHistorial.deleteComanda(comanda)
+                    vmHistorial.deleteComandaFirebase(comanda.id)
                     android.widget.Toast.makeText(requireContext(), "Comanda eliminada", android.widget.Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton("Cancel·lar", null)
                 .show()
         }
 
-        fun editar(comanda: entity.ComandaEntity) {
+        fun editar(comanda: entity.ComandaFirebase) {
             val et = android.widget.EditText(requireContext()).apply { inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL; setText(String.format("%.2f", comanda.total)) }
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Modificar preu").setView(et)
                 .setPositiveButton("Guardar") { _, _ ->
                     et.text.toString().replace(',', '.').toDoubleOrNull()?.let {
-                        vmHistorial.updateComanda(comanda.copy(total = it))
+                        vmHistorial.actualizarComandaFirebase(comanda.id, it)
                         android.widget.Toast.makeText(requireContext(),"Comanda actualitzada", android.widget.Toast.LENGTH_SHORT).show()}}
                 .setNegativeButton("Cancel·lar", null)
                 .show()
         }
 
-        fun mostrarDetallsComanda(comanda: entity.ComandaEntity) {
-            vmHistorial.getProductesQuantitat(comanda.id) { llista ->
-                var missatge = ""
-                if (llista.isEmpty()) {
-                    missatge = "No s'han trobat productes per a aquesta comanda"
-                } else {
-                    for (producte in llista) {
-                        missatge += producte.nom + " x" + producte.quantitat + "\n"
-                    }
+        fun mostrarDetallsComanda(comanda: entity.ComandaFirebase) {
+            var missatge = ""
+            if (comanda.productes.isEmpty()) {
+                missatge = "No s'han trobat productes per a aquesta comanda"
+            } else {
+                for ((_, producte) in comanda.productes) {
+                    missatge += producte.nom + " x" + producte.quantitat + "\n"
                 }
-
-                androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                    .setTitle("Detalls comanda")
-                    .setMessage(missatge)
-                    .setPositiveButton("OK", null)
-                    .show()
             }
+
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Detalls comanda")
+                .setMessage(missatge)
+                .setPositiveButton("OK", null)
+                .show()
         }
 
 
-        vmHistorial.getOrdresUsuari(usuari).observe(viewLifecycleOwner) { llistaComandes ->
+        vmHistorial.comandasFirebase.observe(viewLifecycleOwner) { llistaComandes ->
             binding.recyclerComandes.adapter = adapter.ComandaAdapter(
                 llistaComandes,
                 onEliminar = { comanda ->

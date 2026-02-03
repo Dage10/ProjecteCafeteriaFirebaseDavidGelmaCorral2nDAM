@@ -6,37 +6,63 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import database.AppDatabase
-import entity.ComandaEntity
+import entity.ComandaFirebase
 import kotlinx.coroutines.launch
+import repository.FirebaseRepository
 import repository.Repository
 
 class HistorialViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: Repository
-
-
-    private val _comandaNova = MutableLiveData<Boolean>(false)
+    private val firebaseRepo = FirebaseRepository()
+    private val _comandaNova = MutableLiveData(false)
     val comandaNova: LiveData<Boolean> = _comandaNova
+    private val _comandasFirebase = MutableLiveData<List<ComandaFirebase>>()
+    val comandasFirebase: LiveData<List<ComandaFirebase>> = _comandasFirebase
 
     init {
         val db = AppDatabase.getDatabase(application)
-        repository = Repository(db.comandaDao(), db.producteDao(),db.comandaProducteDao())
+        repository = Repository(db.comandaDao(), db.producteDao(), db.comandaProducteDao())
     }
 
-    fun getOrdresUsuari(usuari: String): LiveData<List<ComandaEntity>> = repository.getOrdresUsuari(usuari)
-
-    fun getProductesQuantitat(comandaId: Int, callback: (List<entity.ProducteComandaQuantitat>) -> Unit) {
+    fun getOrdresUsuariFirebase() {
         viewModelScope.launch {
-            val llista = repository.getProductesQuantitatPerComanda(comandaId)
-            callback(llista)
+            val uid = firebaseRepo.getUsuariActual()
+            if (uid != null) {
+                firebaseRepo.obtenirComandasUsuari(uid).onSuccess { comandas ->
+                    _comandasFirebase.value = comandas
+                }.onFailure {
+                    _comandasFirebase.value = emptyList()
+                }
+            } else {
+                _comandasFirebase.value = emptyList()
+            }
         }
     }
 
-    fun deleteComanda(comanda: ComandaEntity) {
-        viewModelScope.launch { repository.deleteComanda(comanda) }
+    fun deleteComandaFirebase(comandaId: String) {
+        viewModelScope.launch {
+            val uid = firebaseRepo.getUsuariActual()
+            if (uid != null) {
+                firebaseRepo.eliminarComanda(uid, comandaId).onSuccess {
+                    getOrdresUsuariFirebase()
+                }
+            }
+        }
     }
 
-    fun updateComanda(comanda: ComandaEntity) {
-        viewModelScope.launch { repository.updateComanda(comanda) }
+    fun actualizarComandaFirebase(comandaId: String, nouTotal: Double) {
+        viewModelScope.launch {
+            val uid = firebaseRepo.getUsuariActual()
+            if (uid != null) {
+                val comandaActual = _comandasFirebase.value?.find { it.id == comandaId }
+                comandaActual?.let { comanda ->
+                    val comandaActualitzada = comanda.copy(total = nouTotal)
+                    firebaseRepo.actualizarComanda(uid, comandaId, comandaActualitzada).onSuccess {
+                        getOrdresUsuariFirebase()
+                    }
+                }
+            }
+        }
     }
 
     fun handleComandaRealitzada() {

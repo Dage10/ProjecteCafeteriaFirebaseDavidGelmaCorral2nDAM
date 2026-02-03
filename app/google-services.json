@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "418298914937",
+    "project_id": "cafeteriadavidgelma",
+    "storage_bucket": "cafeteriadavidgelma.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418298914937:android:9101731be88548c058cca8",
+        "android_client_info": {
+          "package_name": "com.daviddam.projectecafeteriadavidgelmacorral2ndam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgoMzZY3ucwgdc7-40r2Gcj2jg9Pzajcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

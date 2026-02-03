@@ -8,14 +8,13 @@ import androidx.lifecycle.viewModelScope
 import database.AppDatabase
 import entity.ComandaEntity
 import kotlinx.coroutines.launch
+import repository.FirebaseRepository
 import repository.Repository
 
 class PagamentViewModel(application: Application) : AndroidViewModel(application) {
-
     private val repository: Repository
-
-   
-    private val _comandaFeta = MutableLiveData<Boolean>(false)
+    private val firebaseRepo = FirebaseRepository()
+    private val _comandaFeta = MutableLiveData(false)
     val comandaFeta: LiveData<Boolean> = _comandaFeta
 
     init {
@@ -25,8 +24,13 @@ class PagamentViewModel(application: Application) : AndroidViewModel(application
 
     fun pagar(usuari: String, total: Double, productes: List<entity.ProducteSeleccionat>) {
         viewModelScope.launch {
-            repository.insertComandaAmbProductes(ComandaEntity(usuari = usuari, total = total), productes)
-            _comandaFeta.postValue(true)
+            val result = firebaseRepo.guardarComanda(usuari, total, productes)
+            result.onSuccess {
+                _comandaFeta.postValue(true)
+            }
+            result.onFailure {
+                _comandaFeta.postValue(false)
+            }
         }
     }
 
