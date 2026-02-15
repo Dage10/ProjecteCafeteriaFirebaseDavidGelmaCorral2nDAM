@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import database.AppDatabase
-import entity.ComandaEntity
 import kotlinx.coroutines.launch
 import repository.FirebaseRepository
 import repository.Repository

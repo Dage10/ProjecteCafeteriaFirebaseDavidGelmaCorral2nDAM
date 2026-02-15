@@ -44,6 +44,19 @@ class FirebaseRepository {
     suspend fun guardarComanda(usuari: String, total: Double, productes: List<ProducteSeleccionat>): Result<String> {
         return try {
             val uid = getUsuariActual() ?: throw Exception("Usuari no autenticat")
+            val usuariRef = db.collection("usuaris").document(uid)
+
+
+            val comandes = usuariRef.collection("comandas").get().await()
+
+            val maxIndex = comandes.documents
+                .mapNotNull { it.id.removePrefix("comanda").toIntOrNull() }
+                .maxOrNull() ?: 0
+
+
+            val idComanda = "comanda${maxIndex + 1}"
+
+
             val productesMap = mutableMapOf<String, ProducteComandaFirebase>()
             productes.forEachIndexed { index, producte ->
                 productesMap["producte_$index"] = ProducteComandaFirebase(
@@ -53,30 +66,34 @@ class FirebaseRepository {
                 )
             }
 
-            val comandaRef = db.collection("usuaris").document(uid).collection("comandas").document()
-            val idGenerat = comandaRef.id
 
             val comanda = ComandaFirebase(
-                id = idGenerat, usuari= usuari,
-                total = total, timestamp = System.currentTimeMillis(),
+                id = idComanda,
+                usuari = usuari,
+                total = total,
+                timestamp = System.currentTimeMillis(),
                 productes = productesMap
             )
 
-            comandaRef.set(comanda).await()
-            Result.success(comandaRef.id)
+
+            usuariRef.collection("comandas").document(idComanda).set(comanda).await()
+
+            Result.success(idComanda)
+
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
+
     suspend fun obtenirComandasUsuari(uid: String): Result<List<ComandaFirebase>> {
         return try {
-            val snapshots = db.collection("usuaris")
+            val comandes = db.collection("usuaris")
                 .document(uid).collection("comandas")
                 .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .await()
-            val comandas = snapshots.documents.mapNotNull { doc ->
+            val comandas = comandes.documents.mapNotNull { doc ->
                 doc.toObject(ComandaFirebase::class.java)?.copy(id = doc.id)
             }
             Result.success(comandas)
